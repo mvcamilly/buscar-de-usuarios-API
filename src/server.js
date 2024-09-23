@@ -12,8 +12,6 @@ const conn = knex({
     },
     useNullAsDefault: true
 });
-
-
 app.use(express.json())
 app.use(cors())
 app.use(morgan('dev'))
@@ -83,7 +81,7 @@ app.post("/passagem", (request, response) => {
     response.json({});
 });
 
-// app.post("/cadastro", async (request, response) => {
+
 
 
 //função de registro dos dados salvos 
@@ -105,7 +103,7 @@ app.post('/usuarios', async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: 'cadastro não realizado' })
     }
-})
+});
 
 app.put('/usuarios/:id', async (request, response) => {
     console.log('')
@@ -135,7 +133,7 @@ app.delete('/usuarios/:id', async (request, response) => {
     } catch (error) {
         response.status(500).json({ error: 'erro ao excluir cadastro', error: error.message })
     }
-})
+});
     
 
 app.put('usuario/id', async (request, response) => {
