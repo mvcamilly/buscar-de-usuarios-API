@@ -43,7 +43,7 @@ app.get('/pessoas', async (request, res) => {
 });
 
 app.delete('/pessoas/:id', async (request, response) => {
-    try {
+    try {   
         const { id } = request.params
         await conn("pessoas").where({ id: +id }).del()
         response.status(200).json({ message: 'cadastro exclúido com sucesso' })
