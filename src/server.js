@@ -4,6 +4,7 @@ const knex = require("knex")
 const morgan = require('morgan')
 
 
+
 const app = express();
 const conn = knex({
     client: 'sqlite3',
@@ -16,6 +17,49 @@ app.use(express.json())
 app.use(cors())
 app.use(morgan('dev'))
 
+
+//localhost3000/primeira pagina
+app.post("/cadastro", async (request, response) => {
+    console.log()
+    try {
+        const { nome, sobrenome, telefone } = request.body;
+        await conn('cadastro').insert({ nome, sobrenome, telefone });
+        response.status(201).json({ message: 'registro salvo com sucesso' });
+    } catch (error) {
+        console.error(error)
+        response.status(500).json({error: 'registro não realizado'});
+    }
+});
+
+app.get('/cadastro', async (request, response) => {
+    const cadastro = await conn('cadastro').select()
+    if (cadastro) {
+        response.status(200).json(cadastro);
+    } else {
+        response.status(404).json({ message: 'registro não reconhecido'})
+    }
+    console.log(error)
+});
+
+app.put('/cadastro/:id', async (request, response) => {
+    console.log("registrado")
+    try {
+        const { id } = request.params
+        const { nome, sobrenome, telefone,  } = request.body
+        await conn('pessoas').where({ id: +id }).update(
+            {
+                nome,
+                sobrenome,
+                telefone,
+            });
+        return response.status(200).send('ok')
+
+    } catch (error) {
+        response.status(500).json({ error: 'erro ao digitar', error: error.message })
+    }
+});
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 app.post("/menssage", (request, response) => {
     console.log(request.body)
     response.json({});
@@ -25,7 +69,7 @@ app.post("/head", async (request, response) => {
     console.log()
     try {
         const { nome, telefone, cpf, ibge } = request.body;
-        await conn('pessoas').insert({ nome, telefone, cpf, ibge});
+        await conn('pessoas').insert({ nome, telefone, cpf, ibge });
         response.status(201).json({ message: 'cadastro feito com sucesso' });
     } catch (error) {
         console.error(error)
@@ -43,7 +87,7 @@ app.get('/pessoas', async (request, res) => {
 });
 
 app.delete('/pessoas/:id', async (request, response) => {
-    try {   
+    try {
         const { id } = request.params
         await conn("pessoas").where({ id: +id }).del()
         response.status(200).json({ message: 'cadastro exclúido com sucesso' })
@@ -69,9 +113,8 @@ app.put('/pessoas/:id', async (request, response) => {
     } catch (error) {
         response.status(500).json({ error: 'erro ao editar', error: error.message })
     }
-     
-});
 
+});
 
 
 //rotas de usuarios
@@ -80,8 +123,6 @@ app.post("/passagem", (request, response) => {
     console.log(request.body)
     response.json({});
 });
-
-
 
 
 //função de registro dos dados salvos 
@@ -118,11 +159,9 @@ app.put('/usuarios/:id', async (request, response) => {
         return response.status(200).send('ok')
 
     } catch (error) {
-        response.status(500).json({ error: 'erro ao editar', error: error.message})
+        response.status(500).json({ error: 'erro ao editar', error: error.message })
     }
 });
-
-app.put
 
 //rota para excluir dados
 app.delete('/usuarios/:id', async (request, response) => {
@@ -134,23 +173,23 @@ app.delete('/usuarios/:id', async (request, response) => {
         response.status(500).json({ error: 'erro ao excluir cadastro', error: error.message })
     }
 });
-    
+
 
 app.put('usuario/id', async (request, response) => {
     console.log('')
-    try{
-    const { id } = request.params
-    const { nome, cpf } = request.body
-    await conn('usuarios').where({ id: +id}).update(
-        {
-            nome,
-            cpf,
-        });
-    return response.status(200).send('ok')
+    try {
+        const { id } = request.params
+        const { nome, cpf } = request.body
+        await conn('usuarios').where({ id: +id }).update(
+            {
+                nome,
+                cpf,
+            });
+        return response.status(200).send('ok')
 
-} catch (error) {
-    response.status(500).json({ error: 'error ao editar', })
-} 
+    } catch (error) {
+        response.status(500).json({ error: 'error ao editar', })
+    }
 });
 
 
