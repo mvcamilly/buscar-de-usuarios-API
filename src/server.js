@@ -29,35 +29,77 @@ app.post("/cadastro", async (request, response) => {
         console.error(error)
         response.status(500).json({error: 'registro não realizado'});
     }
-});
+}); 
 
 app.get('/cadastro', async (request, response) => {
-    const cadastro = await conn('cadastro').select()
+    try {
+    const cadastro = await conn('cadastro').select().limit(10)
     if (cadastro) {
         response.status(200).json(cadastro);
     } else {
         response.status(404).json({ message: 'registro não reconhecido'})
     }
+} catch (error) {
     console.log(error)
+}
 });
+
+// app.put('/cadastro/:id', async (request, response) => {
+//     console.log("registrado")
+//     try {
+//         const { id } = request.params
+//         const { nome, sobrenome, telefone, } = request.body
+//         await conn('pessoas').where({ id: +id }).update(
+//             {
+//                 nome,
+//                 sobrenome,
+//                 telefone,
+//             });
+//         return response.status(200).send('ok')
+
+//     } catch (error) {
+//         response.status(500).json({ error: 'erro ao digitar', error: error.message })
+//     }
+// });
+
 
 app.put('/cadastro/:id', async (request, response) => {
-    console.log("registrado")
     try {
-        const { id } = request.params
-        const { nome, sobrenome, telefone,  } = request.body
-        await conn('pessoas').where({ id: +id }).update(
-            {
-                nome,
-                sobrenome,
-                telefone,
-            });
-        return response.status(200).send('ok')
+        const { id } = request.params; // Captura o ID dos parâmetros
+        const { nome, sobrenome, telefone } = request.body; // Captura os dados do corpo da requisição
 
+        // Validação básica
+        if (!nome || !sobrenome || !telefone) {
+            return response.status(400).json({ error: 'Todos os campos são obrigatórios.' });
+        }
+
+        // Atualização no banco de dados
+        const rowsUpdated = await conn('cadastro')
+            .where({ id: +id }) // Garante que o ID é numérico
+            .update({ nome, sobrenome, telefone });
+
+        if (rowsUpdated === 0) {
+            return response.status(404).json({ error: 'Usuário não encontrado.' });
+        }
+
+        return response.status(200).json({ message: 'Usuário atualizado com sucesso.' });
     } catch (error) {
-        response.status(500).json({ error: 'erro ao digitar', error: error.message })
+        console.error('Erro ao atualizar usuário:', error.message);
+        return response.status(500).json({ error: 'Erro interno no servidor.', details: error.message });
     }
 });
+
+app.delete('/cadastro/:id', async (request, response) => {
+    try {
+        const { id } = request.params
+        await conn("cadastro").where({ id: +id }).del()
+        response.status(200).json({ message: 'cadastro exclúido com sucesso' })
+    } catch (error) {
+        response.status(500).json({ error: 'erro ao excluir cadastro', error: error.message })
+    }
+});
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 app.post("/menssage", (request, response) => {
@@ -84,7 +126,7 @@ app.get('/pessoas', async (request, res) => {
     } else {
         res.status(404).json({ message: 'Cadastro não reconhecido' })
     }
-});
+}); 
 
 app.delete('/pessoas/:id', async (request, response) => {
     try {
@@ -94,7 +136,7 @@ app.delete('/pessoas/:id', async (request, response) => {
     } catch (error) {
         response.status(500).json({ error: 'erro ao excluir cadastro', error: error.message })
     }
-})
+});
 
 app.put('/pessoas/:id', async (request, response) => {
     console.log("qualquercoisa")
@@ -123,6 +165,7 @@ app.post("/passagem", (request, response) => {
     console.log(request.body)
     response.json({});
 });
+
 
 
 //função de registro dos dados salvos 
@@ -173,6 +216,16 @@ app.delete('/usuarios/:id', async (request, response) => {
         response.status(500).json({ error: 'erro ao excluir cadastro', error: error.message })
     }
 });
+
+app.delete('usuario/:id/', async (request, response) => {
+    try {
+        const { id } = resquest.parambs
+        await conn("usuario").where({id: + id}).del()
+        response.status(200).json({ message: 'cadastro excluído com sucesso'})
+    } catch(error) {
+        response.status(500).json({ error: 'erro ao excluir cadastro', error: error.message })
+    }
+})
 
 
 app.put('usuario/id', async (request, response) => {

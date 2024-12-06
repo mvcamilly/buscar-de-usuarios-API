@@ -1,4 +1,4 @@
-exports.up = function(knex) {
+JZSexports.up = function(knex) {
     return knex.schema.createTable('cadastro', table => {
         table.increments('id').primary();
         table.string('nome');
