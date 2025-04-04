@@ -45,32 +45,33 @@ app.get('/cadastro', async (req, res) => { // req- requisição do cliente, res-
     }
 });
 
-
 app.put('/cadastro/:id', async (request, response) => {
     try {
-        const { id } = request.params; // Captura o ID dos parâmetros
-        const { nome } = request.body; // Captura os dados do corpo da requisição
+        const { id } = request.params; //captura o ID dos parametros 
+        const { nome, cpf } = request.body; // captura os dados do corpo da requisição
 
         // Validação básica
-        if (!nome) {
+        if (!nome || !cpf) {
             return response.status(400).json({ error: 'Todos os campos são obrigatórios.' });
         }
 
         // Atualização no banco de dados
         const rowsUpdated = await conn('cadastro')
-            .where({ id: +id }) // Garante que o ID é numérico
-            .update({ nome });
+            .where({ id: +id }) // garante que o ID seja numerico 
+            .update({ nome, cpf }); //utiliza os dois dados 
 
         if (rowsUpdated === 0) {
             return response.status(404).json({ error: 'Usuário não encontrado.' });
         }
 
         return response.status(200).json({ message: 'Usuário atualizado com sucesso.' });
+
     } catch (error) {
         console.error('Erro ao atualizar usuário:', error.message);
         return response.status(500).json({ error: 'Erro interno no servidor.', details: error.message });
     }
 });
+
 
 app.delete('/cadastro/:id', async (request, response) => {
     try {
@@ -81,7 +82,6 @@ app.delete('/cadastro/:id', async (request, response) => {
         response.status(500).json({ error: 'erro ao excluir cadastro', error: error.message })
     }
 });
-
 
 
 const PORT = 3333;
