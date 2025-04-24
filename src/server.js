@@ -53,7 +53,7 @@ app.put('/cadastro/:id', async (request, response) => {
         // Validação básica
         if (!nome || !cpf) {
             return response.status(400).json({ error: 'Todos os campos são obrigatórios.' });
-        }
+        }  
 
         // Atualização no banco de dados
         const rowsUpdated = await conn('cadastro')
